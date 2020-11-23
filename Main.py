@@ -56,7 +56,7 @@ student['sex'] = (student['sex'] == 'M').astype(int)
 print(student.describe().transpose())
 
 from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(student.drop(label, axis=1), student[label], train_size=0.8)
+X_train, X_test, y_train, y_test = train_test_split(student.drop(label, axis=1), student[label], train_size=0.8, random_state=1)
 
 from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
@@ -67,11 +67,14 @@ X_test = scaler.transform(X_test)
 
 print(pd.DataFrame(X_train, columns=features).describe().transpose())
 
+# 'lbfgs' solver for weight optimizer is suggested as a more efficient
+# and accurate solver for small datasets
 from sklearn.neural_network import MLPClassifier
-mlp = MLPClassifier(hidden_layer_sizes=(2), max_iter=1000)
+mlp = MLPClassifier(hidden_layer_sizes=(2), max_iter=1000, solver='lbfgs', random_state=1)
 
-mlp.partial_fit(X_train, y_train.values.ravel(), student[label[0]].unique())
-visualise(mlp)
+# Cannot be used with 'lbfgs' solver for weight optimizer
+# mlp.partial_fit(X_train, y_train.values.ravel(), student[label[0]].unique())
+# visualise(mlp)
 
 mlp.fit(X_train, y_train.values.ravel())
 visualise(mlp)
