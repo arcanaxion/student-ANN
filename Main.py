@@ -42,7 +42,7 @@ math_student = math_student.drop(['G1', 'G2', 'G3'], axis=1)
 port_student = port_student.drop(['G1', 'G2', 'G3'], axis=1)
 student = pd.concat([math_student, port_student]).drop_duplicates().reset_index(drop=True)
 
-features = ['sex', 'age', 'activities', 'freetime', 'goout']
+features = ['sex', 'age', 'activities', 'freetime', 'goout', 'address', 'absences']
 label = ['Dalc']
 columns = features + label
 
@@ -59,6 +59,7 @@ print(student.head())
 # Binarise to 1 and 0
 student['sex'] = (student['sex'] == 'M').astype(int) 
 student['activities'] = (student['activities'] == 'yes').astype(int) 
+student['address'] = (student['address'] == 'U').astype(int) 
 
 # Describe
 print(student.describe().transpose())
@@ -78,7 +79,7 @@ print(pd.DataFrame(X_train, columns=features).describe().transpose())
 # 'lbfgs' solver for weight optimizer is suggested as a more efficient
 # and accurate solver for small datasets
 from sklearn.neural_network import MLPClassifier
-mlp = MLPClassifier(hidden_layer_sizes=(2), max_iter=1000, activation='relu', solver='lbfgs', random_state=1)
+mlp = MLPClassifier(hidden_layer_sizes=(6), max_iter=1000, activation='relu', solver='lbfgs', random_state=1)
 
 # Cannot be used with 'lbfgs' solver for weight optimizer
 # mlp.partial_fit(X_train, y_train.values.ravel(), student[label[0]].unique())
@@ -100,4 +101,4 @@ print("Log-loss function:", mlp.loss_)
 
 print("Number of iterations:", mlp.n_iter_)
 
-plt.show()
+# plt.show()
