@@ -32,12 +32,18 @@ def visualise(mlp):
 
 import os 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-file_path = os.path.join(dir_path, "student-mat.csv")
+math_path = os.path.join(dir_path, "student-mat.csv")
+port_path = os.path.join(dir_path, "student-por.csv")
 
-features = ['age', 'Medu', 'Fedu', 'traveltime', 'studytime', 'absences', 'G3', 'famsize', 'sex']
-label = ['address']
-columns = features + label
-student = pd.read_csv(file_path, header=0, usecols=columns)
+math_student = pd.read_csv(math_path, header=0)
+port_student = pd.read_csv(port_path, header=0)
+
+math_student = math_student.drop(['G1', 'G2', 'G3'], axis=1)
+port_student = port_student.drop(['G1', 'G2', 'G3'], axis=1)
+student = pd.concat([math_student, port_student]).drop_duplicates().reset_index(drop=True)
+
+features = ['sex', 'age', 'activities', 'freetime', 'goout']
+label = ['Dalc']
 
 # Check for null values
 print("Null value check:")
@@ -47,16 +53,17 @@ print(student.isnull().sum())
 print("Print 'student' head:")
 print(student.head())
 
-# Binarise
-student['famsize'] = (student['famsize'] == 'GT3').astype(int)
+# Binarise to 1 and 0
+
 student['sex'] = (student['sex'] == 'M').astype(int) 
+student['activities'] = (student['activities'] == 'yes').astype(int) 
 
 
 # Describe
 print(student.describe().transpose())
 
 from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(student.drop(label, axis=1), student[label], train_size=0.8, random_state=1)
+X_train, X_test, y_train, y_test = train_test_split(student[features], student[label], train_size=0.8, random_state=1)
 
 from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
@@ -70,7 +77,7 @@ print(pd.DataFrame(X_train, columns=features).describe().transpose())
 # 'lbfgs' solver for weight optimizer is suggested as a more efficient
 # and accurate solver for small datasets
 from sklearn.neural_network import MLPClassifier
-mlp = MLPClassifier(hidden_layer_sizes=(2), max_iter=1000, solver='lbfgs', random_state=1)
+mlp = MLPClassifier(hidden_layer_sizes=(10), max_iter=1000, activation='relu', solver='lbfgs', random_state=1, verbose=True)
 
 # Cannot be used with 'lbfgs' solver for weight optimizer
 # mlp.partial_fit(X_train, y_train.values.ravel(), student[label[0]].unique())
@@ -82,7 +89,12 @@ visualise(mlp)
 predictions = mlp.predict(X_test)
 
 from sklearn.metrics import confusion_matrix, classification_report
+print("Confusion matrix:")
 print(confusion_matrix(y_test, predictions))
+print("Classification report:")
 print(classification_report(y_test, predictions))
 
-plt.show()
+print("Mean accuracy:", mlp.score(X_test, y_test))
+print("Log-loss function:", mlp.loss_)
+
+# plt.show()
