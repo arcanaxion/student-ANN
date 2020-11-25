@@ -44,6 +44,9 @@ student = pd.concat([math_student, port_student]).drop_duplicates().reset_index(
 
 features = ['sex', 'age', 'activities', 'freetime', 'goout']
 label = ['Dalc']
+columns = features + label
+
+student = student[columns]
 
 # Check for null values
 print("Null value check:")
@@ -54,10 +57,8 @@ print("Print 'student' head:")
 print(student.head())
 
 # Binarise to 1 and 0
-
 student['sex'] = (student['sex'] == 'M').astype(int) 
 student['activities'] = (student['activities'] == 'yes').astype(int) 
-
 
 # Describe
 print(student.describe().transpose())
@@ -77,7 +78,7 @@ print(pd.DataFrame(X_train, columns=features).describe().transpose())
 # 'lbfgs' solver for weight optimizer is suggested as a more efficient
 # and accurate solver for small datasets
 from sklearn.neural_network import MLPClassifier
-mlp = MLPClassifier(hidden_layer_sizes=(10), max_iter=1000, activation='relu', solver='lbfgs', random_state=1, verbose=True)
+mlp = MLPClassifier(hidden_layer_sizes=(2), max_iter=1000, activation='relu', solver='lbfgs', random_state=1)
 
 # Cannot be used with 'lbfgs' solver for weight optimizer
 # mlp.partial_fit(X_train, y_train.values.ravel(), student[label[0]].unique())
@@ -97,4 +98,6 @@ print(classification_report(y_test, predictions))
 print("Mean accuracy:", mlp.score(X_test, y_test))
 print("Log-loss function:", mlp.loss_)
 
-# plt.show()
+print("Number of iterations:", mlp.n_iter_)
+
+plt.show()
