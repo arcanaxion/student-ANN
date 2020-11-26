@@ -101,4 +101,4 @@ print("Log-loss function:", mlp.loss_)
 
 print("Number of iterations:", mlp.n_iter_)
 
-# plt.show()
+plt.show()
