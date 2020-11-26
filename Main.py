@@ -38,9 +38,9 @@ port_path = os.path.join(dir_path, "student-por.csv")
 math_student = pd.read_csv(math_path, header=0)
 port_student = pd.read_csv(port_path, header=0)
 
-math_student = math_student.drop(['G1', 'G2', 'G3'], axis=1)
-port_student = port_student.drop(['G1', 'G2', 'G3'], axis=1)
-student = pd.concat([math_student, port_student]).drop_duplicates().reset_index(drop=True)
+# Drop duplicates based on specific columns as described on the Kaggle dataset
+from_kaggle = ["school","sex","age","address","famsize","Pstatus","Medu","Fedu","Mjob","Fjob","reason","nursery","internet"]
+student = pd.concat([math_student, port_student]).drop_duplicates(subset=from_kaggle).reset_index(drop=True)
 
 features = ['sex', 'age', 'activities', 'freetime', 'goout', 'address', 'absences']
 label = ['Dalc']
