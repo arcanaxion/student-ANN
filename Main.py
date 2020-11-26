@@ -65,7 +65,7 @@ student['address'] = (student['address'] == 'U').astype(int)
 print(student.describe().transpose())
 
 from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(student[features], student[label], train_size=0.8, random_state=1)
+X_train, X_test, y_train, y_test = train_test_split(student[features], student[label], train_size=0.8)
 
 from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
@@ -79,7 +79,7 @@ print(pd.DataFrame(X_train, columns=features).describe().transpose())
 # 'lbfgs' solver for weight optimizer is suggested as a more efficient
 # and accurate solver for small datasets
 from sklearn.neural_network import MLPClassifier
-mlp = MLPClassifier(hidden_layer_sizes=(6), max_iter=1000, activation='relu', solver='lbfgs', random_state=1)
+mlp = MLPClassifier(hidden_layer_sizes=(6), max_iter=1000, activation='relu', solver='lbfgs')
 
 # Cannot be used with 'lbfgs' solver for weight optimizer
 # mlp.partial_fit(X_train, y_train.values.ravel(), student[label[0]].unique())
